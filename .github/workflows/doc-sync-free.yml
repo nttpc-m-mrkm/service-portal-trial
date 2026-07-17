@@ -62,6 +62,11 @@ jobs:
           UPDATED_COUNT=0
           UPDATED_FILES=""
 
+          # PR差分に含まれるファイル一覧を取得
+          CHANGED_FILES=$(gh pr diff $PR_NUMBER --name-only)
+          echo "変更されたファイル一覧:"
+          echo "$CHANGED_FILES"
+
           for DOC_PATH in "${DOC_FILES[@]}"; do
             echo "=========================================="
             echo "処理中: $DOC_PATH"
@@ -72,6 +77,19 @@ jobs:
               echo "ファイルが存在しません。スキップします。"
               continue
             fi
+
+            # 画面仕様書の場合、対応するHTMLが変更されていなければスキップ
+            # （README.mdとscreen-list.mdは常に処理する）
+            case "$DOC_PATH" in
+              docs/screens/*)
+                SCREEN_NAME=$(basename "$DOC_PATH" .md)
+                HTML_FILE="${SCREEN_NAME}.html"
+                if ! echo "$CHANGED_FILES" | grep -qE "(${HTML_FILE}|js/|css/)"; then
+                  echo "関連ファイル（${HTML_FILE}）が変更されていません。スキップします。"
+                  continue
+                fi
+                ;;
+            esac
 
             # 現在のドキュメントを読み込み
             CURRENT_DOC=$(cat "$DOC_PATH")
@@ -86,7 +104,7 @@ jobs:
                 ;;
               docs/screens/*)
                 SCREEN_NAME=$(basename "$DOC_PATH" .md)
-                DOC_GUIDE="画面仕様書（${SCREEN_NAME}） → この画面に関するHTML/JS/CSSの変更を検知し、以下を更新する：画面概要、表示項目、操作仕様（ボタンやリンクの動作）、バリデーション、画面遷移、エラーハンドリング。スクリーンショットが自動撮影されるため、ASCIIレイアウト図は生成しないこと。変更されたHTMLの該当画面以外の仕様書の場合は、現在のドキュメントをそのまま返すこと。"
+                DOC_GUIDE="画面仕様書（${SCREEN_NAME}） → この画面に関するHTML/JS/CSSの変更を検知し、以下を更新する：画面概要、表示項目、操作仕様（ボタンやリンクの動作）、バリデーション、画面遷移、エラーハンドリング。スクリーンショットが自動撮影されるため、ASCIIレイアウト図は生成しないこと。"
                 ;;
             esac
 
