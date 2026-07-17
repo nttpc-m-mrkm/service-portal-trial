@@ -176,6 +176,12 @@ function initDashboard() {
   document.getElementById('couponBalance').textContent = formatCurrency(couponBalance);
   document.getElementById('pendingCount').textContent = MOCK_SERVICES.filter(s => s.status === 'pending').length;
 
+  // 未読お知らせ数（モック: 直近7日以内のお知らせを未読とする）
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+  const unreadCount = MOCK_NOTICES.filter(n => new Date(n.date) >= oneWeekAgo).length;
+  document.getElementById('unreadNoticeCount').textContent = unreadCount;
+
   const noticeList = document.getElementById('noticeList');
   noticeList.innerHTML = MOCK_NOTICES.map(n =>
     `<li><span class="date">${n.date}</span>${n.text}</li>`
