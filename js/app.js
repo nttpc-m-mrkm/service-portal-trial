@@ -419,3 +419,92 @@ function submitContact(e) {
   document.getElementById('contactFormView').style.display = 'none';
   document.getElementById('contactCompleteView').style.display = 'block';
 }
+
+// --- よくある質問 ---
+const MOCK_FAQ = [
+  {
+    category: 'contract',
+    q: 'サービスの申し込みからどのくらいで利用開始できますか？',
+    a: 'お申し込み後、審査完了まで1～3営業日かかります。審査完了後、すぐにご利用いただけます。'
+  },
+  {
+    category: 'contract',
+    q: 'サービスを解約した場合、いつまで利用できますか？',
+    a: '解約手続き後、当月末まではご利用いただけます。翌月1日にサービスが停止されます。'
+  },
+  {
+    category: 'billing',
+    q: '支払い方法にはどのような種類がありますか？',
+    a: 'クレジットカード、口座振替、請求書払いに対応しています。請求書払いは法人契約のみご利用いただけます。'
+  },
+  {
+    category: 'billing',
+    q: '月の途中で申し込んだ場合、料金は日割り計算されますか？',
+    a: 'はい、初月の料金は日割り計算となります。解約月も同様に日割り計算されます。'
+  },
+  {
+    category: 'technical',
+    q: 'サービスの稼働率はどの程度ですか？',
+    a: 'SLA（サービスレベル契約）として月間稼働率99.9%を保証しています。計画メンテナンスは事前にお知らせにて通知いたします。'
+  },
+  {
+    category: 'technical',
+    q: '障害が発生した場合、どのように連絡がきますか？',
+    a: 'ダッシュボードのお知らせ欄に掲載するほか、ご登録のメールアドレスにも通知いたします。'
+  },
+  {
+    category: 'coupon',
+    q: 'クーポンの有効期限はありますか？',
+    a: 'クーポンの有効期限は購入日から1年間です。期限を過ぎたクーポン残高は失効します。'
+  },
+  {
+    category: 'coupon',
+    q: 'クーポンは返金できますか？',
+    a: '購入済みのクーポンは原則として返金できません。サービス利用料への充当のみ可能です。'
+  }
+];
+
+function initFAQ() {
+  if (!requireAuth()) return;
+  renderFAQ('all');
+}
+
+function renderFAQ(category) {
+  const filtered = category === 'all'
+    ? MOCK_FAQ
+    : MOCK_FAQ.filter(f => f.category === category);
+
+  const container = document.getElementById('faqList');
+  container.innerHTML = filtered.map((f, i) => `
+    <div class="card" style="margin-bottom: 12px; cursor: pointer;" onclick="toggleAnswer(this)">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="color: #3b82f6; font-weight: bold; font-size: 1.2rem;">Q</span>
+        <span style="font-weight: bold;">${f.q}</span>
+        <span style="margin-left: auto; color: #999;">▼</span>
+      </div>
+      <div class="faq-answer" style="display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee;">
+        <div style="display: flex; align-items: flex-start; gap: 12px;">
+          <span style="color: #22c55e; font-weight: bold; font-size: 1.2rem;">A</span>
+          <span style="color: #555;">${f.a}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleAnswer(el) {
+  const answer = el.querySelector('.faq-answer');
+  const arrow = el.querySelector('span:last-of-type');
+  if (answer.style.display === 'none') {
+    answer.style.display = 'block';
+    arrow.textContent = '▲';
+  } else {
+    answer.style.display = 'none';
+    arrow.textContent = '▼';
+  }
+}
+
+function filterFAQ() {
+  const category = document.getElementById('faqCategory').value;
+  renderFAQ(category);
+}

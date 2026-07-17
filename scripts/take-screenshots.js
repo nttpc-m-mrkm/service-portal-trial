@@ -57,6 +57,11 @@ const PAGES = [
     file: 'contact.html',
     description: 'お問い合わせ',
   },
+  {
+    name: 'faq',
+    file: 'faq.html',
+    description: 'よくある質問',
+  },
 ];
 
 async function main() {

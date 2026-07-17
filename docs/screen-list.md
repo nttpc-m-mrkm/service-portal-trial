@@ -11,6 +11,7 @@
 | 5 | SCR-APPLY | 新規申し込み | apply.html | サービス選択→確認→完了の3ステップで新規サービスを申し込む |
 | 6 | SCR-COUPON | クーポン購入 | coupon.html | クーポンの額面を選択して購入する |
 | 7 | SCR-CONTACT | お問い合わせ | contact.html | お問い合わせフォームを通じて、ユーザーが質問や問題を報告できる。 |
+| 8 | SCR-FAQ | よくある質問 | faq.html | カテゴリフィルター付きのアコーディオン形式のFAQを表示し、お問い合わせフォームへの導線がある。 |
 
 ## 画面遷移図
 
@@ -22,6 +23,7 @@ graph TD
     DASHBOARD --> APPLY[新規申し込み<br>apply.html]
     DASHBOARD --> COUPON[クーポン購入<br>coupon.html]
     DASHBOARD --> CONTACT[お問い合わせ<br>contact.html]
+    DASHBOARD --> FAQ[よくある質問<br>faq.html]
     
     SERVICES --> DETAIL[サービス詳細<br>service-detail.html]
     DETAIL --> SERVICES
@@ -35,6 +37,7 @@ graph TD
         APPLY
         COUPON
         CONTACT
+        FAQ
     end
 
     DASHBOARD -->|ログアウト| LOGIN
@@ -42,6 +45,7 @@ graph TD
     APPLY -->|ログアウト| LOGIN
     COUPON -->|ログアウト| LOGIN
     CONTACT -->|ログアウト| LOGIN
+    FAQ -->|ログアウト| LOGIN
 
 ## 共通レイアウト
 
@@ -49,7 +53,7 @@ graph TD
 
 - **サイドバー**（左 220px 固定）
   - ロゴ: 「サービス管理ポータル」
-  - ナビゲーションメニュー: ダッシュボード / 契約サービス一覧 / 新規申し込み / クーポン購入 / お問い合わせ
+  - ナビゲーションメニュー: ダッシュボード / 契約サービス一覧 / 新規申し込み / クーポン購入 / お問い合わせ / よくある質問
   - ユーザー情報: ユーザー名 + ログアウトリンク（下部固定）
 - **メインコンテンツエリア**（右側）
   - ページヘッダー: 画面タイトル + パンくずリスト

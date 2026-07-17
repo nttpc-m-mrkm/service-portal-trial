@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>よくある質問 | サービス管理ポータル</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="layout">
+    <!-- サイドバー -->
+    <aside class="sidebar">
+      <div class="logo">サービス管理ポータル</div>
+      <nav>
+        <a href="dashboard.html">ダッシュボード</a>
+        <a href="services.html">契約サービス一覧</a>
+        <a href="apply.html">新規申し込み</a>
+        <a href="coupon.html">クーポン購入</a>
+        <a href="contact.html">お問い合わせ</a>
+        <a href="faq.html" class="active">よくある質問</a>
+      </nav>
+      <div class="user-info"></div>
+    </aside>
+
+    <!-- メインコンテンツ -->
+    <main class="main">
+      <div class="page-header">
+        <h2>よくある質問</h2>
+        <div class="breadcrumb">ホーム &gt; よくある質問</div>
+      </div>
+
+      <!-- カテゴリフィルター -->
+      <div style="margin-bottom: 20px;">
+        <label for="faqCategory" style="margin-right: 8px; font-weight: bold;">カテゴリ:</label>
+        <select id="faqCategory" onchange="filterFAQ()" style="padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px;">
+          <option value="all">すべて</option>
+          <option value="contract">契約について</option>
+          <option value="billing">料金・請求について</option>
+          <option value="technical">技術的な質問</option>
+          <option value="coupon">クーポンについて</option>
+        </select>
+      </div>
+
+      <!-- FAQ一覧 -->
+      <div id="faqList"></div>
+
+      <!-- 見つからない場合 -->
+      <div class="card" style="text-align: center; padding: 30px; margin-top: 20px;">
+        <p style="color: #666;">お探しの回答が見つからない場合</p>
+        <a href="contact.html" class="btn btn-primary" style="margin-top: 12px;">お問い合わせフォームへ</a>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>initFAQ();</script>
+</body>
+</html>
