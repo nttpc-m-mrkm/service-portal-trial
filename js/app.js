@@ -373,3 +373,49 @@ function confirmPurchase() {
   document.getElementById('completeCouponAmount').textContent = selectedCoupon.label;
   document.getElementById('newBalance').textContent = formatCurrency(3000 + selectedCoupon.amount);
 }
+
+// --- お問い合わせ ---
+function initContact() {
+  if (!requireAuth()) return;
+
+  // 関連サービスのプルダウンに契約中サービスを設定
+  const serviceSelect = document.getElementById('contactService');
+  MOCK_SERVICES.filter(s => s.status === 'active').forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.id;
+    opt.textContent = s.name;
+    serviceSelect.appendChild(opt);
+  });
+}
+
+function submitContact(e) {
+  e.preventDefault();
+
+  const category = document.getElementById('contactCategory').value;
+  const subject = document.getElementById('contactSubject').value.trim();
+  const body = document.getElementById('contactBody').value.trim();
+
+  let valid = true;
+
+  if (!subject) {
+    document.getElementById('contactSubject').parentElement.classList.add('has-error');
+    valid = false;
+  } else {
+    document.getElementById('contactSubject').parentElement.classList.remove('has-error');
+  }
+
+  if (!body) {
+    document.getElementById('contactBody').parentElement.classList.add('has-error');
+    valid = false;
+  } else {
+    document.getElementById('contactBody').parentElement.classList.remove('has-error');
+  }
+
+  if (!valid) return;
+
+  // 受付番号を生成（モック）
+  const ticketNo = 'TK-' + Date.now().toString().slice(-8);
+  document.getElementById('ticketNumber').textContent = ticketNo;
+  document.getElementById('contactFormView').style.display = 'none';
+  document.getElementById('contactCompleteView').style.display = 'block';
+}

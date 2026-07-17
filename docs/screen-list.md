@@ -10,6 +10,7 @@
 | 4 | SCR-SERVICE-DETAIL | サービス詳細 | service-detail.html | 個別サービスの契約情報を表示し、解約操作ができる |
 | 5 | SCR-APPLY | 新規申し込み | apply.html | サービス選択→確認→完了の3ステップで新規サービスを申し込む |
 | 6 | SCR-COUPON | クーポン購入 | coupon.html | クーポンの額面を選択して購入する |
+| 7 | SCR-CONTACT | お問い合わせ | contact.html | お問い合わせフォームを通じて、ユーザーが質問や問題を報告できる。 |
 
 ## 画面遷移図
 
@@ -20,6 +21,7 @@ graph TD
     DASHBOARD --> SERVICES[契約サービス一覧<br>services.html]
     DASHBOARD --> APPLY[新規申し込み<br>apply.html]
     DASHBOARD --> COUPON[クーポン購入<br>coupon.html]
+    DASHBOARD --> CONTACT[お問い合わせ<br>contact.html]
     
     SERVICES --> DETAIL[サービス詳細<br>service-detail.html]
     DETAIL --> SERVICES
@@ -32,12 +34,14 @@ graph TD
         SERVICES
         APPLY
         COUPON
+        CONTACT
     end
 
     DASHBOARD -->|ログアウト| LOGIN
     SERVICES -->|ログアウト| LOGIN
     APPLY -->|ログアウト| LOGIN
     COUPON -->|ログアウト| LOGIN
+    CONTACT -->|ログアウト| LOGIN
 
 ## 共通レイアウト
 
@@ -45,7 +49,7 @@ graph TD
 
 - **サイドバー**（左 220px 固定）
   - ロゴ: 「サービス管理ポータル」
-  - ナビゲーションメニュー: ダッシュボード / 契約サービス一覧 / 新規申し込み / クーポン購入
+  - ナビゲーションメニュー: ダッシュボード / 契約サービス一覧 / 新規申し込み / クーポン購入 / お問い合わせ
   - ユーザー情報: ユーザー名 + ログアウトリンク（下部固定）
 - **メインコンテンツエリア**（右側）
   - ページヘッダー: 画面タイトル + パンくずリスト

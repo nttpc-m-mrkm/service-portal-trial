@@ -12,6 +12,7 @@
 | サービス詳細 | service-detail.html | サービスの契約情報詳細・解約操作 |
 | 新規申し込み | apply.html | サービス選択→確認→完了のステップ型フォーム |
 | クーポン購入 | coupon.html | クーポン額面選択・購入 |
+| お問い合わせ | contact.html | お問い合わせフォーム |
 
 ## 技術スタック
 
@@ -38,6 +39,7 @@ service-portal/
 ├── service-detail.html  # サービス詳細
 ├── apply.html           # 新規申し込み
 ├── coupon.html          # クーポン購入
+├── contact.html         # お問い合わせ
 ├── css/
 │   └── style.css        # 共通スタイル
 ├── js/
@@ -50,7 +52,8 @@ service-portal/
 │       ├── services.md
 │       ├── service-detail.md
 │       ├── apply.md
-│       └── coupon.md
+│       ├── coupon.md
+│       └── contact.md
 └── README.md
 
 ## 追加情報
