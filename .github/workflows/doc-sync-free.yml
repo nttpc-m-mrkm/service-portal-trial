@@ -1,0 +1,157 @@
+name: 画面仕様書の自動更新（GitHub Models）
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - '*.html'
+      - 'js/**'
+      - 'css/**'
+
+jobs:
+  update-docs:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
+    permissions:
+      contents: write
+      pull-requests: write
+      models: read
+
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: 全ドキュメントを自動更新
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          # PRの差分を取得
+          DIFF=$(gh pr diff $PR_NUMBER)
+
+          # 更新対象のドキュメント一覧
+          DOC_FILES=(
+            "README.md"
+            "docs/screen-list.md"
+            "docs/screens/login.md"
+            "docs/screens/dashboard.md"
+            "docs/screens/services.md"
+            "docs/screens/service-detail.md"
+            "docs/screens/apply.md"
+            "docs/screens/coupon.md"
+          )
+
+          UPDATED_COUNT=0
+          UPDATED_FILES=""
+
+          for DOC_PATH in "${DOC_FILES[@]}"; do
+            echo "=========================================="
+            echo "処理中: $DOC_PATH"
+            echo "=========================================="
+
+            # ファイルが存在しない場合はスキップ
+            if [ ! -f "$DOC_PATH" ]; then
+              echo "ファイルが存在しません。スキップします。"
+              continue
+            fi
+
+            # 現在のドキュメントを読み込み
+            CURRENT_DOC=$(cat "$DOC_PATH")
+
+            # ドキュメント種別に応じたガイドを設定
+            case "$DOC_PATH" in
+              "README.md")
+                DOC_GUIDE="README.md → プロジェクト概要、画面構成一覧、ディレクトリ構成など。画面が追加・削除された場合は一覧テーブルとディレクトリツリーを更新する。"
+                ;;
+              "docs/screen-list.md")
+                DOC_GUIDE="画面一覧・画面遷移図 → 画面の追加・削除・名称変更があれば一覧テーブルとMermaid遷移図を更新する。遷移先の変更があれば矢印を修正する。"
+                ;;
+              docs/screens/*)
+                SCREEN_NAME=$(basename "$DOC_PATH" .md)
+                DOC_GUIDE="画面仕様書（${SCREEN_NAME}） → この画面に関するHTML/JS/CSSの変更を検知し、以下を更新する：
+  - 画面概要: 画面の目的が変わった場合
+  - レイアウト: UIの構成が変わった場合はASCIIレイアウト図を更新
+  - 表示項目: 表示要素の追加・削除・変更
+  - 操作仕様: ボタンやリンクの動作変更、新しい操作の追加
+  - バリデーション: 入力チェックの追加・変更
+  - 画面遷移: 遷移先の変更
+  - エラーハンドリング: エラー処理の追加・変更
+
+  ※ 変更されたHTMLの該当画面以外の仕様書の場合は、現在のドキュメントをそのまま返すこと"
+                ;;
+            esac
+
+            # GitHub Models API にドキュメントの更新を依頼
+            RESPONSE=$(curl -s -X POST "https://models.inference.ai.azure.com/chat/completions" \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -H "Content-Type: application/json" \
+              -d "$(jq -n \
+                --arg diff "$DIFF" \
+                --arg doc "$CURRENT_DOC" \
+                --arg pr_title "$PR_TITLE" \
+                --arg pr_body "$PR_BODY" \
+                --arg doc_path "$DOC_PATH" \
+                --arg doc_guide "$DOC_GUIDE" \
+                '{
+                  "model": "gpt-4o-mini",
+                  "messages": [
+                    {
+                      "role": "system",
+                      "content": ("あなたはWebアプリケーションの画面仕様書を保守するシニアエンジニアです。\nPRの情報（タイトル・説明・コード差分）を読み取り、渡されたドキュメントを更新してください。\n\n## 対象ドキュメント\n\n更新対象のファイル: " + $doc_path + "\n\n" + $doc_guide + "\n\n## 最重要ルール\n\nドキュメントは「人間が読んで画面の仕様を理解するための文書」です。\n単にコードの変更内容を機械的に列挙するのではなく、画面を操作するユーザーの視点で自然な日本語の文章で説明を書いてください。\n\n### 悪い例（機械的な列挙）\n> deleteボタンにconfirmダイアログを追加した。onclickイベントでconfirm()を呼ぶ。\n\n### 良い例（ユーザー視点の仕様記述）\n> 「削除」ボタンを押下すると確認ダイアログが表示される。「OK」を選択すると削除処理が実行され、「キャンセル」を選択すると何もせずダイアログを閉じる。\n\n## 更新のルール\n\n1. ドキュメントの既存のフォーマット・構成・文体を維持すること\n2. コード変更に関係する箇所だけを更新すること（無関係な箇所は一切変えない）\n3. PRのタイトルと説明文から変更の目的・背景を読み取り、反映すること\n4. テーブルは既存の形式に合わせて行を追加・修正すること\n5. ASCIIレイアウト図がある場合、UIの構造変更があれば図も更新すること\n6. Mermaid図がある場合は、変更に応じて図も更新すること。Mermaidのコードブロックは必ず ```mermaid で開始し ``` で閉じること\n7. このコード変更がこのドキュメントに無関係な場合は、現在のドキュメントをそのまま返すこと\n\n## 出力形式\n\n- 更新後のドキュメント全文をMarkdownで出力してください\n- 余計な説明や前置き（「以下が更新後です」等）は不要です\n- Markdownのコードブロック（```markdown）で囲まないでください")
+                    },
+                    {
+                      "role": "user",
+                      "content": ("## PRタイトル\n\n" + $pr_title + "\n\n## PR説明文\n\n" + $pr_body + "\n\n## コード差分\n\n" + $diff + "\n\n## 現在のドキュメント（" + $doc_path + "）\n\n" + $doc)
+                    }
+                  ],
+                  "temperature": 0.3
+                }'
+              )")
+
+            # レスポンスからドキュメントを抽出
+            UPDATED_DOC=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
+
+            if [ -z "$UPDATED_DOC" ]; then
+              echo "更新なし、またはAPIエラー"
+              echo "APIレスポンス: $RESPONSE"
+              continue
+            fi
+
+            # Markdownのコードブロックで囲まれている場合は除去
+            UPDATED_DOC=$(echo "$UPDATED_DOC" | sed '/^```markdown$/d' | sed '/^```$/d')
+
+            # ドキュメントを上書き
+            echo "$UPDATED_DOC" > "$DOC_PATH"
+
+            # 差分があるか確認
+            if git diff --quiet "$DOC_PATH"; then
+              echo "$DOC_PATH: 変更なし"
+            else
+              echo "$DOC_PATH: 更新あり！"
+              UPDATED_COUNT=$((UPDATED_COUNT + 1))
+              UPDATED_FILES="$UPDATED_FILES $DOC_PATH"
+            fi
+
+            # レートリミット対策で少し待つ
+            sleep 2
+          done
+
+          echo "=========================================="
+          echo "更新されたドキュメント数: $UPDATED_COUNT"
+          echo "=========================================="
+
+          # 差分があればまとめてコミット＆プッシュ
+          if [ $UPDATED_COUNT -gt 0 ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add $UPDATED_FILES
+            git commit -m "docs: 画面仕様書を自動更新（${UPDATED_COUNT}ファイル）"
+            git push
+          else
+            echo "全ドキュメントに変更なし"
+          fi

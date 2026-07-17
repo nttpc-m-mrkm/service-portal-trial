@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>クーポン購入 | サービス管理ポータル</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="logo">サービス管理ポータル</div>
+      <nav>
+        <a href="dashboard.html">ダッシュボード</a>
+        <a href="services.html">契約サービス一覧</a>
+        <a href="apply.html">新規申し込み</a>
+        <a href="coupon.html" class="active">クーポン購入</a>
+      </nav>
+      <div class="user-info"></div>
+    </aside>
+
+    <main class="main">
+      <div class="page-header">
+        <h2>クーポン購入</h2>
+        <div class="breadcrumb">ホーム &gt; クーポン購入</div>
+      </div>
+
+      <!-- クーポン選択ビュー -->
+      <div id="couponSelectView">
+        <div class="card" style="margin-bottom:24px;">
+          <h3>現在のクーポン残高</h3>
+          <div style="font-size:28px; font-weight:bold; color:var(--primary);" id="currentBalance">-</div>
+        </div>
+
+        <div class="card">
+          <h3>購入するクーポンを選択</h3>
+          <div class="coupon-grid" id="couponGrid"></div>
+
+          <div style="margin-top:24px; text-align:right;">
+            <button class="btn btn-primary" id="purchaseBtn" disabled onclick="showPurchaseConfirm()">購入手続きへ</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 購入完了ビュー -->
+      <div id="couponCompleteView" style="display:none;">
+        <div class="card">
+          <div class="complete-box">
+            <div class="icon">&#10004;</div>
+            <h3>クーポンを購入しました</h3>
+            <p>購入額: <strong id="completeCouponAmount">-</strong></p>
+            <p>新しい残高: <strong id="newBalance">-</strong></p>
+            <a href="coupon.html" class="btn btn-primary" style="margin-top:24px;">クーポン購入画面に戻る</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 購入確認モーダル -->
+      <div class="modal-overlay" id="purchaseModal">
+        <div class="modal">
+          <h3>購入確認</h3>
+          <p>以下のクーポンを購入しますか？</p>
+          <dl class="detail-grid" style="margin-top:16px;">
+            <dt>クーポン額面</dt>
+            <dd id="confirmCouponAmount">-</dd>
+            <dt>購入価格</dt>
+            <dd id="confirmCouponPrice">-</dd>
+          </dl>
+          <div class="btn-row">
+            <button class="btn btn-outline" onclick="closePurchaseModal()">キャンセル</button>
+            <button class="btn btn-primary" onclick="confirmPurchase()">購入する</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>initCoupon();</script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新規申し込み | サービス管理ポータル</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="logo">サービス管理ポータル</div>
+      <nav>
+        <a href="dashboard.html">ダッシュボード</a>
+        <a href="services.html">契約サービス一覧</a>
+        <a href="apply.html" class="active">新規申し込み</a>
+        <a href="coupon.html">クーポン購入</a>
+      </nav>
+      <div class="user-info"></div>
+    </aside>
+
+    <main class="main">
+      <div class="page-header">
+        <h2>新規サービス申し込み</h2>
+        <div class="breadcrumb">ホーム &gt; 新規申し込み</div>
+      </div>
+
+      <!-- ステップインジケーター -->
+      <div class="steps">
+        <div class="step active">① サービス選択</div>
+        <div class="step">② 確認</div>
+        <div class="step">③ 完了</div>
+      </div>
+
+      <!-- ステップ1: サービス選択 -->
+      <div class="step-content" id="step1">
+        <div class="card">
+          <h3>申し込みサービスを選択してください</h3>
+
+          <div class="form-group">
+            <label class="required">サービス</label>
+            <select id="serviceSelect" onchange="updatePlanSelect()"></select>
+          </div>
+
+          <div class="form-group">
+            <label class="required">プラン</label>
+            <select id="planSelect"></select>
+          </div>
+
+          <div class="form-group">
+            <label>備考（任意）</label>
+            <textarea id="applyNote" rows="3" placeholder="ご要望があればご記入ください"></textarea>
+          </div>
+
+          <button class="btn btn-primary" onclick="goToConfirm()">確認画面へ</button>
+        </div>
+      </div>
+
+      <!-- ステップ2: 確認 -->
+      <div class="step-content" id="step2" style="display:none;">
+        <div class="card">
+          <h3>申し込み内容の確認</h3>
+          <dl class="detail-grid">
+            <dt>サービス</dt>
+            <dd id="confirmService">-</dd>
+            <dt>プラン</dt>
+            <dd id="confirmPlan">-</dd>
+            <dt>月額料金</dt>
+            <dd id="confirmFee">-</dd>
+          </dl>
+          <div class="alert alert-info" style="margin-top:16px;">
+            お申し込み後、審査完了まで1～3営業日かかります。
+          </div>
+          <div style="display:flex; gap:12px; margin-top:16px;">
+            <button class="btn btn-outline" onclick="showApplyStep(1)">← 戻る</button>
+            <button class="btn btn-primary" onclick="submitApply()">申し込む</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ステップ3: 完了 -->
+      <div class="step-content" id="step3" style="display:none;">
+        <div class="card">
+          <div class="complete-box">
+            <div class="icon">&#10004;</div>
+            <h3>お申し込みを受け付けました</h3>
+            <p>審査完了後、ご登録のメールアドレスにご連絡いたします。</p>
+            <a href="services.html" class="btn btn-primary" style="margin-top:24px;">契約サービス一覧へ</a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>initApply();</script>
+</body>
+</html>

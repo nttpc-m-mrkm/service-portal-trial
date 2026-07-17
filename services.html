@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>契約サービス一覧 | サービス管理ポータル</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="logo">サービス管理ポータル</div>
+      <nav>
+        <a href="dashboard.html">ダッシュボード</a>
+        <a href="services.html" class="active">契約サービス一覧</a>
+        <a href="apply.html">新規申し込み</a>
+        <a href="coupon.html">クーポン購入</a>
+      </nav>
+      <div class="user-info"></div>
+    </aside>
+
+    <main class="main">
+      <div class="page-header">
+        <h2>契約サービス一覧</h2>
+        <div class="breadcrumb">ホーム &gt; 契約サービス一覧</div>
+      </div>
+
+      <!-- フィルター -->
+      <div class="filter-bar">
+        <label>ステータス:</label>
+        <select id="statusFilter" onchange="filterServices()">
+          <option value="all">すべて</option>
+          <option value="active">利用中</option>
+          <option value="pending">申請中</option>
+          <option value="cancelled">解約済</option>
+        </select>
+      </div>
+
+      <!-- サービステーブル -->
+      <div class="card">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>サービスID</th>
+                <th>サービス名</th>
+                <th>カテゴリ</th>
+                <th>ステータス</th>
+                <th>プラン</th>
+                <th>月額</th>
+                <th>契約日</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="serviceTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>initServiceList();</script>
+</body>
+</html>

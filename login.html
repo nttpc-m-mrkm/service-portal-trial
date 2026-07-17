@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ログイン | サービス管理ポータル</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="login-wrapper">
+    <div class="login-box">
+      <h1>サービス管理ポータル</h1>
+      <p class="subtitle">ご利用中のサービスの確認・お申し込みはこちらから</p>
+
+      <form onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="required">ユーザーID</label>
+          <input type="text" id="userId" placeholder="例: user001">
+          <span class="error-msg">ユーザーIDを入力してください</span>
+        </div>
+
+        <div class="form-group">
+          <label class="required">パスワード</label>
+          <input type="password" id="password" placeholder="8文字以上">
+          <span class="error-msg">パスワードを入力してください</span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">ログイン</button>
+      </form>
+
+      <p style="text-align:center; margin-top:16px; font-size:12px; color:#6c757d;">
+        ※ デモ用：任意のID・パスワード（8文字以上）でログインできます
+      </p>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
