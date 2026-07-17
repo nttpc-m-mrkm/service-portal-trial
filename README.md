@@ -13,6 +13,7 @@
 | 新規申し込み | apply.html | サービス選択→確認→完了のステップ型フォーム |
 | クーポン購入 | coupon.html | クーポン額面選択・購入 |
 | お問い合わせ | contact.html | お問い合わせフォーム |
+| よくある質問 | faq.html | カテゴリフィルター付きのアコーディオン形式FAQ |
 
 ## 技術スタック
 
@@ -40,6 +41,7 @@ service-portal/
 ├── apply.html           # 新規申し込み
 ├── coupon.html          # クーポン購入
 ├── contact.html         # お問い合わせ
+├── faq.html             # よくある質問
 ├── css/
 │   └── style.css        # 共通スタイル
 ├── js/
@@ -53,7 +55,8 @@ service-portal/
 │       ├── service-detail.md
 │       ├── apply.md
 │       ├── coupon.md
-│       └── contact.md
+│       ├── contact.md
+│       └── faq.md
 └── README.md
 
 ## 追加情報
