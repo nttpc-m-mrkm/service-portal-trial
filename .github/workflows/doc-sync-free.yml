@@ -55,6 +55,7 @@ jobs:
             "docs/screens/service-detail.md"
             "docs/screens/apply.md"
             "docs/screens/coupon.md"
+            "docs/screens/contact.md"
           )
 
           UPDATED_COUNT=0
@@ -84,7 +85,7 @@ jobs:
                 ;;
               docs/screens/*)
                 SCREEN_NAME=$(basename "$DOC_PATH" .md)
-                DOC_GUIDE="画面仕様書（${SCREEN_NAME}） → この画面に関するHTML/JS/CSSの変更を検知し、以下を更新する：画面概要、レイアウト（ASCIIレイアウト図）、表示項目、操作仕様（ボタンやリンクの動作）、バリデーション、画面遷移、エラーハンドリング。変更されたHTMLの該当画面以外の仕様書の場合は、現在のドキュメントをそのまま返すこと。"
+                DOC_GUIDE="画面仕様書（${SCREEN_NAME}） → この画面に関するHTML/JS/CSSの変更を検知し、以下を更新する：画面概要、表示項目、操作仕様（ボタンやリンクの動作）、バリデーション、画面遷移、エラーハンドリング。スクリーンショットが自動撮影されるため、ASCIIレイアウト図は生成しないこと。変更されたHTMLの該当画面以外の仕様書の場合は、現在のドキュメントをそのまま返すこと。"
                 ;;
             esac
 

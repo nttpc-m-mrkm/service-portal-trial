@@ -52,6 +52,11 @@ const PAGES = [
     file: 'coupon.html',
     description: 'クーポン購入',
   },
+  {
+    name: 'contact',
+    file: 'contact.html',
+    description: 'お問い合わせ',
+  },
 ];
 
 async function main() {
