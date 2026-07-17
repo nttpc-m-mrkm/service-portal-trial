@@ -7,7 +7,7 @@
 | 画面名 | ファイル | 概要 |
 |---|---|---|
 | ログイン | login.html | ユーザーID・パスワードによるログイン |
-| ダッシュボード | dashboard.html | 利用状況サマリー・お知らせ表示 |
+| ダッシュボード | dashboard.html | 利用状況サマリー・お知らせ表示（未読お知らせカードを追加） |
 | 契約サービス一覧 | services.html | 契約中サービスの一覧表示・フィルタリング |
 | サービス詳細 | service-detail.html | サービスの契約情報詳細・解約操作 |
 | 新規申し込み | apply.html | サービス選択→確認→完了のステップ型フォーム |
@@ -26,13 +26,11 @@
 # 例: Python簡易サーバー
 cd service-portal
 python3 -m http.server 8080
-```
 
 ブラウザで `http://localhost:8080/login.html` にアクセスしてください。
 
 ## ディレクトリ構成
 
-```
 service-portal/
 ├── login.html           # ログイン画面
 ├── dashboard.html       # ダッシュボード
@@ -54,4 +52,7 @@ service-portal/
 │       ├── apply.md
 │       └── coupon.md
 └── README.md
-```
+
+## 追加情報
+
+ダッシュボードに「未読お知らせ」カードが追加され、直近7日以内のお知らせが未読としてカウントされるようになりました。この変更により、ユーザーは新しいお知らせの存在を一目で確認できるようになります。

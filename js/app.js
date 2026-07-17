@@ -176,6 +176,20 @@ function initDashboard() {
   document.getElementById('couponBalance').textContent = formatCurrency(couponBalance);
   document.getElementById('pendingCount').textContent = MOCK_SERVICES.filter(s => s.status === 'pending').length;
 
+  // 未読お知らせ数（モック: 直近7日以内のお知らせを未読とする）
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+  const unreadCount = MOCK_NOTICES.filter(n => new Date(n.date) >= oneWeekAgo).length;
+  document.getElementById('unreadNoticeCount').textContent = unreadCount;
+
+  // 最終ログイン日時を表示
+  const lastLoginEl = document.getElementById('lastLogin');
+  if (lastLoginEl) {
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    lastLoginEl.textContent = '最終ログイン: ' + dateStr;
+  }
+
   const noticeList = document.getElementById('noticeList');
   noticeList.innerHTML = MOCK_NOTICES.map(n =>
     `<li><span class="date">${n.date}</span>${n.text}</li>`

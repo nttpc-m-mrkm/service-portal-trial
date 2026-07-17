@@ -24,6 +24,17 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
 
+      - name: Node.jsをセットアップ
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 画面スクリーンショットを撮影
+        run: |
+          npm install playwright
+          npx playwright install chromium --with-deps
+          node scripts/take-screenshots.js
+
       - name: 全ドキュメントを自動更新
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -73,16 +84,7 @@ jobs:
                 ;;
               docs/screens/*)
                 SCREEN_NAME=$(basename "$DOC_PATH" .md)
-                DOC_GUIDE="画面仕様書（${SCREEN_NAME}） → この画面に関するHTML/JS/CSSの変更を検知し、以下を更新する：
-  - 画面概要: 画面の目的が変わった場合
-  - レイアウト: UIの構成が変わった場合はASCIIレイアウト図を更新
-  - 表示項目: 表示要素の追加・削除・変更
-  - 操作仕様: ボタンやリンクの動作変更、新しい操作の追加
-  - バリデーション: 入力チェックの追加・変更
-  - 画面遷移: 遷移先の変更
-  - エラーハンドリング: エラー処理の追加・変更
-
-  ※ 変更されたHTMLの該当画面以外の仕様書の場合は、現在のドキュメントをそのまま返すこと"
+                DOC_GUIDE="画面仕様書（${SCREEN_NAME}） → この画面に関するHTML/JS/CSSの変更を検知し、以下を更新する：画面概要、レイアウト（ASCIIレイアウト図）、表示項目、操作仕様（ボタンやリンクの動作）、バリデーション、画面遷移、エラーハンドリング。変更されたHTMLの該当画面以外の仕様書の場合は、現在のドキュメントをそのまま返すこと。"
                 ;;
             esac
 
@@ -145,13 +147,33 @@ jobs:
           echo "更新されたドキュメント数: $UPDATED_COUNT"
           echo "=========================================="
 
+          # スクリーンショットの変更を追跡
+          SCREENSHOTS_CHANGED=false
+          if [ -d "docs/screenshots" ]; then
+            git add docs/screenshots/
+            if ! git diff --cached --quiet docs/screenshots/; then
+              SCREENSHOTS_CHANGED=true
+              echo "スクリーンショットに変更あり"
+            fi
+          fi
+
           # 差分があればまとめてコミット＆プッシュ
-          if [ $UPDATED_COUNT -gt 0 ]; then
+          if [ $UPDATED_COUNT -gt 0 ] || [ "$SCREENSHOTS_CHANGED" = true ]; then
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add $UPDATED_FILES
-            git commit -m "docs: 画面仕様書を自動更新（${UPDATED_COUNT}ファイル）"
+            if [ $UPDATED_COUNT -gt 0 ]; then
+              git add $UPDATED_FILES
+            fi
+            COMMIT_MSG="docs: 画面仕様書を自動更新"
+            if [ $UPDATED_COUNT -gt 0 ] && [ "$SCREENSHOTS_CHANGED" = true ]; then
+              COMMIT_MSG="docs: 画面仕様書・スクリーンショットを自動更新（${UPDATED_COUNT}ファイル）"
+            elif [ $UPDATED_COUNT -gt 0 ]; then
+              COMMIT_MSG="docs: 画面仕様書を自動更新（${UPDATED_COUNT}ファイル）"
+            else
+              COMMIT_MSG="docs: スクリーンショットを自動更新"
+            fi
+            git commit -m "$COMMIT_MSG"
             git push
           else
-            echo "全ドキュメントに変更なし"
+            echo "全ドキュメント・スクリーンショットに変更なし"
           fi
