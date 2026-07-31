@@ -1,4 +1,4 @@
-name: 画面仕様書の自動更新（GitHub Models）
+name: 画面仕様書の自動更新（Gemini API）
 
 on:
   pull_request:
@@ -15,7 +15,6 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-      models: read
 
     steps:
       - name: リポジトリをチェックアウト
@@ -38,6 +37,7 @@ jobs:
       - name: 全ドキュメントを自動更新
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_BODY: ${{ github.event.pull_request.body }}
@@ -108,9 +108,9 @@ jobs:
                 ;;
             esac
 
-            # GitHub Models API にドキュメントの更新を依頼
-            RESPONSE=$(curl -s -X POST "https://models.inference.ai.azure.com/chat/completions" \
-              -H "Authorization: Bearer $GITHUB_TOKEN" \
+            # Gemini API にドキュメントの更新を依頼（OpenAI互換エンドポイント）
+            RESPONSE=$(curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions" \
+              -H "Authorization: Bearer $GEMINI_API_KEY" \
               -H "Content-Type: application/json" \
               -d "$(jq -n \
                 --arg diff "$DIFF" \
@@ -120,7 +120,7 @@ jobs:
                 --arg doc_path "$DOC_PATH" \
                 --arg doc_guide "$DOC_GUIDE" \
                 '{
-                  "model": "gpt-4o-mini",
+                  "model": "gemini-3.5-flash-lite",
                   "messages": [
                     {
                       "role": "system",
@@ -135,8 +135,11 @@ jobs:
                 }'
               )")
 
+            # デバッグ: レスポンスの先頭を表示
+            echo "APIレスポンス（先頭500文字）: $(echo "$RESPONSE" | head -c 500)"
+
             # レスポンスからドキュメントを抽出
-            UPDATED_DOC=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
+            UPDATED_DOC=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty' 2>/dev/null)
 
             if [ -z "$UPDATED_DOC" ]; then
               echo "更新なし、またはAPIエラー"
