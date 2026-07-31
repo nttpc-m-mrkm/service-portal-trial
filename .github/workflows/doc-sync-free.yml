@@ -120,7 +120,7 @@ jobs:
                 --arg doc_path "$DOC_PATH" \
                 --arg doc_guide "$DOC_GUIDE" \
                 '{
-                  "model": "gemini-2.0-flash-lite",
+                  "model": "gemini-2.5-flash",
                   "messages": [
                     {
                       "role": "system",
